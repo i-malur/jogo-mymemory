@@ -19,7 +19,7 @@ let cards = [];
 let flippedCards = [];
 let matchedPairs = 0;
 let lives = 5;
-let timeRemaining = 90;
+let timeRemaining = 180;
 let timerInterval;
 let gameStatus = 'playing';
 let isContinuing = false; // Flag para saber se mantemos as vidas no restart
@@ -54,20 +54,20 @@ characters.forEach(char => {
     tempCanvas.width = cardWidth;
     tempCanvas.height = cardHeight;
     const tCtx = tempCanvas.getContext('2d');
-    
+
     const gradient = tCtx.createLinearGradient(0, 0, 0, cardHeight);
     gradient.addColorStop(0, char.color);
     gradient.addColorStop(1, '#2c3e50');
     tCtx.fillStyle = gradient;
-    
+
     tCtx.beginPath();
     tCtx.roundRect(0, 0, cardWidth, cardHeight, 12);
     tCtx.fill();
-    
+
     tCtx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
     tCtx.lineWidth = 4;
     tCtx.stroke();
-    
+
     tCtx.fillStyle = '#fff';
     tCtx.font = '40px Arial';
     tCtx.textAlign = 'center';
@@ -78,7 +78,7 @@ characters.forEach(char => {
     tCtx.shadowColor = 'rgba(0,0,0,0.8)';
     tCtx.shadowBlur = 4;
     tCtx.fillText(char.name, cardWidth / 2, cardHeight / 2 + 25);
-    
+
     const img = new Image();
     img.src = tempCanvas.toDataURL();
     images[char.name] = img;
@@ -89,20 +89,20 @@ const backImage = (() => {
     tempCanvas.width = cardWidth;
     tempCanvas.height = cardHeight;
     const tCtx = tempCanvas.getContext('2d');
-    
+
     const gradient = tCtx.createLinearGradient(0, 0, cardWidth, cardHeight);
     gradient.addColorStop(0, '#8e44ad');
     gradient.addColorStop(1, '#2980b9');
     tCtx.fillStyle = gradient;
-    
+
     tCtx.beginPath();
     tCtx.roundRect(0, 0, cardWidth, cardHeight, 12);
     tCtx.fill();
-    
+
     tCtx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
     tCtx.lineWidth = 4;
     tCtx.stroke();
-    
+
     tCtx.fillStyle = '#fff';
     tCtx.font = 'bold 50px Arial';
     tCtx.textAlign = 'center';
@@ -110,7 +110,7 @@ const backImage = (() => {
     tCtx.shadowColor = 'rgba(0,0,0,0.5)';
     tCtx.shadowBlur = 8;
     tCtx.fillText('✨', cardWidth / 2, cardHeight / 2);
-    
+
     const img = new Image();
     img.src = tempCanvas.toDataURL();
     return img;
@@ -120,27 +120,27 @@ function initGame() {
     cards = [];
     flippedCards = [];
     matchedPairs = 0;
-    
+
     if (!isContinuing) {
         lives = 5;
     }
     isContinuing = false; // Reset da flag para a próxima rodada
-    
-    timeRemaining = 90;
+
+    timeRemaining = 180;
     gameStatus = 'playing';
     gameModal.style.display = 'none'; // Esconde o modal customizado
     canvas.style.cursor = 'pointer';
-    
+
     updateStatusBar();
-    
+
     let deck = [];
     characters.forEach(char => {
         deck.push(char.name);
         deck.push(char.name);
     });
-    
+
     deck.sort(() => Math.random() - 0.5);
-    
+
     let index = 0;
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -156,23 +156,23 @@ function initGame() {
             index++;
         }
     }
-    
+
     clearInterval(timerInterval);
     timerInterval = setInterval(updateTimer, 1000);
-    
+
     draw();
 }
 
 function updateTimer() {
     if (gameStatus !== 'playing') return;
-    
+
     timeRemaining--;
-    
+
     if (timeRemaining <= 0) {
         lives--;
         clearInterval(timerInterval);
         canvas.style.cursor = 'default';
-        
+
         if (lives <= 0) {
             lives = 0;
             gameStatus = 'gameover';
@@ -197,7 +197,7 @@ function updateStatusBar() {
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     cards.forEach(card => {
         if (card.isFlipped || card.isMatched) {
             if (images[card.character].complete) {
@@ -208,7 +208,7 @@ function draw() {
                 ctx.drawImage(backImage, card.x, card.y, card.width, card.height);
             }
         }
-        
+
         if (card.isMatched) {
             ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.beginPath();
@@ -228,20 +228,20 @@ function showModal(title, subtitle, titleColor) {
 canvas.addEventListener('click', (e) => {
     if (gameStatus !== 'playing') return;
     if (flippedCards.length >= 2) return;
-    
+
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    
+
     for (let i = 0; i < cards.length; i++) {
         let card = cards[i];
         if (mouseX >= card.x && mouseX <= card.x + card.width &&
             mouseY >= card.y && mouseY <= card.y + card.height) {
-            
+
             if (!card.isFlipped && !card.isMatched) {
                 card.isFlipped = true;
                 flippedCards.push(card);
-                
+
                 if (flippedCards.length === 2) {
                     checkMatch();
                 }
@@ -254,24 +254,24 @@ canvas.addEventListener('click', (e) => {
 
 function checkMatch() {
     const [card1, card2] = flippedCards;
-    
+
     if (card1.character === card2.character) {
         card1.isMatched = true;
         card2.isMatched = true;
         matchedPairs++;
         flippedCards = [];
-        
+
         if (matchedPairs === 20) {
             gameStatus = 'victory';
             isContinuing = false;
             clearInterval(timerInterval);
             canvas.style.cursor = 'default';
-            
-            const timeTaken = 90 - timeRemaining;
+
+            const timeTaken = 180 - timeRemaining;
             const minutesTaken = Math.floor(timeTaken / 60);
             const secondsTaken = timeTaken % 60;
             const timeFormatted = `${minutesTaken.toString().padStart(2, '0')}:${secondsTaken.toString().padStart(2, '0')}`;
-            
+
             showModal('🏆 VITÓRIA! 🏆', `Vidas restantes: ${lives} | Tempo levado: ${timeFormatted}`, '#f1c40f');
         }
     } else {
