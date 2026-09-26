@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória - Disney</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <h1>✨ Jogo da Memória Disney ✨</h1>
+        <div class="status-bar">
+            <span id="lives">❤️ Vidas: 5</span>
+            <span id="timer">⏱️ Tempo: 01:30</span>
+        </div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="1000" height="700"></canvas>
+            <div id="gameModal" class="modal" style="display:none;">
+                <h2 id="modalTitle"></h2>
+                <p id="modalSubtitle"></p>
+                <button id="restartBtn">Jogar Novamente</button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
